@@ -24,6 +24,7 @@ impl CardList {
     CardList { cards: Vec::new() }
   }
 
+  #[allow(dead_code)]
   pub fn at(&self, index: usize) -> Result<&Card, io::Error> {
     Ok(&self.cards[index])
   }

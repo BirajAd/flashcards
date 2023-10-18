@@ -38,6 +38,9 @@ fn main() {
             Ok(i) => i,
             Err(e) => panic!("{e}"),
         };
+        let count = total as usize;
+
+        let mut for_review: Vec<&Card> = Vec::new();
 
         for card in all_cards.test_knowledge() {
             if total == 0 {
@@ -46,15 +49,24 @@ fn main() {
             total -= 1;
             print!("{} ", &card.term.red().bold());
             let right = user_input(String::from("y/n?:"), "green");
+            if right != "" && right != "y" {
+                for_review.push(&card);
+            }
             println!("{}\n", &card.meaning);
         }
-        
-        // let random_number = rng.gen_range(0..all_cards.len());
-        // let random_card = match all_cards.at(random_number) {
-        //     Ok(c) => c,
-        //     Err(e) => panic!("{e}"),
-        // };
-        // println!("{} -> {}", random_card.term, random_card.meaning);
+        let review_len: usize = for_review.len();
 
+        if review_len == 0 {
+            println!("Congratulations, you got all {count} terms right.");
+        } else {
+            print!("You got {} terms wrong out of {}, ", review_len, count);
+            println!("Do you want to review those words?");
+            let right = user_input(String::from("y/n?:"), "green");
+            if right == "y" {
+                for card in for_review {
+                    println!("{} => {}", card.term, card.meaning);
+                }
+            }
+        }
     }
 }
