@@ -1,8 +1,10 @@
+use std::fs::File;
 use std::io::{self, Write};
 use std::{ error::Error };
 use colored::*;
 
 mod flashcards;
+use csv::Reader;
 use flashcards::{ Card, CardList };
 
 pub fn user_input(prompt: String, color: &str) -> String {
@@ -25,23 +27,21 @@ pub fn user_input(prompt: String, color: &str) -> String {
 }
 
 fn get_cards(file_name: String) -> Result<CardList, Box<dyn Error>> {
-    let mut contents = csv::Reader::from_path(file_name)
-        .expect("Something went wrong reading the file");
+    let mut contents: Reader<File> = csv::Reader::from_path(file_name)
+      .expect("Something went wrong reading the file");
 
-    let mut flashcard_list = CardList::new();
+    let mut flashcard_list: CardList = CardList::new();
 
     for record in contents.deserialize() {
-        let card : Card = record?;
-        flashcard_list.add(card);
+      let card : Card = record?;
+      flashcard_list.add(card);
     }
     // flashcardList.print_all_cards();
     Ok(flashcard_list)
 }
 
-
-
 pub fn test_my_knowledge(file_name: &str) {
-  let mut all_cards = match get_cards(file_name.to_string()) {
+  let mut all_cards: CardList = match get_cards(file_name.to_string()) {
     Ok(cardlist) => cardlist,
     Err(e) => panic!("{}", e),
   };
@@ -52,19 +52,19 @@ pub fn test_my_knowledge(file_name: &str) {
     Ok(i) => i,
     Err(e) => panic!("{e}"),
   };
-  let count = total as usize;
+  let count: usize = total as usize;
 
   let mut for_review: Vec<&Card> = Vec::new();
 
   for card in all_cards.test_knowledge() {
     if total == 0 {
-        break;
+      break;
     }
     total -= 1;
     print!("{} ", &card.term.red().bold());
-    let right = user_input(String::from("y/n?:"), "green");
+    let right: String = user_input(String::from("y/n?:"), "green");
     if right != "" && right != "y" {
-        for_review.push(&card);
+      for_review.push(&card);
     }
     println!("{}\n", &card.meaning);
   }
