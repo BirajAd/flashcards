@@ -9,12 +9,13 @@ pub fn user_input(prompt: String, color: &str) -> String {
   let mut input: String = String::new();
 
   if color == "green" {
-    println!("\n{}", prompt.green().bold());
+    print!("{}", prompt.green().bold());
   } else if color == "red" {
-    println!("\n{}", prompt.red().bold());
+    print!("{}", prompt.red().bold());
   } else if color == "blue" {
-    println!("\n{}", prompt.blue().bold());
+    print!("{}", prompt.blue().bold());
   }
+  io::stdout().flush();
   
   match io::stdin().read_line(&mut input) {
     Ok(_s) => {},
@@ -38,8 +39,6 @@ fn get_cards(file_name: String) -> Result<CardList, Box<dyn Error>> {
     Ok(flashcard_list)
 }
 
-
-
 pub fn test_my_knowledge(file_name: &str) {
   let mut all_cards = match get_cards(file_name.to_string()) {
     Ok(cardlist) => cardlist,
@@ -61,12 +60,15 @@ pub fn test_my_knowledge(file_name: &str) {
         break;
     }
     total -= 1;
-    print!("{} ", &card.term.red().bold());
-    let right = user_input(String::from("y/n?:"), "green");
-    if right != "" && right != "y" {
+    print!("\n{} ", &card.term.red().bold());
+    let reveal = user_input(String::from(""), "green");
+    if reveal == "" || reveal == "y" {
+      println!("{}\n", &card.meaning);
+    }
+    let right = user_input(String::from("got it? y/n: "), "green");
+    if right == "n" {
         for_review.push(&card);
     }
-    println!("{}\n", &card.meaning);
   }
   let review_len: usize = for_review.len();
 
@@ -76,7 +78,7 @@ pub fn test_my_knowledge(file_name: &str) {
     print!("You got {} terms wrong out of {}, ", review_len, count);
     println!("Do you want to review those words?");
     let right = user_input(String::from("y/n?:"), "green");
-    if right == "y" {
+    if right == "y" || right == "" {
       for card in for_review {
         println!("{} => {}", card.term, card.meaning);
       }
