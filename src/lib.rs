@@ -57,15 +57,15 @@ pub fn test_my_knowledge(file_name: &str) {
 
   let mut for_review: Vec<&Card> = Vec::new();
 
-  for card in all_cards.test_knowledge() {
+  for (row, card) in all_cards.test_knowledge().enumerate() {
     if total == 0 {
       break;
     }
     total -= 1;
-    print!("\n{} ", &card.term.red().bold());
+    print!("\n{}. {} ", row+1, &card.term.red().bold());
     let reveal = user_input(String::from(""), "green");
     if reveal == "" || reveal == "y" {
-      println!("{}\n", &card.meaning);
+      println!(" -->  {}", &card.meaning);
     }
     let right = user_input(String::from("got it? y/n: "), "green");
     if right == "n" {
@@ -75,7 +75,7 @@ pub fn test_my_knowledge(file_name: &str) {
   let review_len: usize = for_review.len();
 
   if review_len == 0 {
-    println!("Congratulations, you got all {count} terms right.");
+    println!("{} {} {}", "\nCongratulations, you got all".green(), {count}, "terms right.\n".green());
   } else {
     print!("You got {} terms wrong out of {}, ", review_len, count);
     println!("Do you want to review those words?");
