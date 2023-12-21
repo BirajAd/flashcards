@@ -10,10 +10,10 @@ The program is interactive and will ask you the number of terms you want to revi
 
 Here is how your csv file should look like:
 
-```
-term,meaning
-probity,"honesty, integrity"
-cupidity,greed
-```
+
+| term | meaning |
+| ------|------- |
+| probity | honesty, integrity |
+| cupidity | greed |
 
 As you can see the csv file will have 2 headers/columns. One is term and other one is for meaning.
